@@ -11,6 +11,7 @@ import datetime
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
+from collections import deque
 
 # ── ensure project root on path ──────────────────────────────────────────────
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -92,6 +93,19 @@ class DeepFakeLab(tk.Tk):
         self.step_active      = [False, False, False, False]  # bottom bar steps
         self._thumb_refs: list = []           # prevent GC of PhotoImages
 
+        # ── controls state ────────────────────────────────────────────────────
+        self.opacity_var          = tk.DoubleVar(value=1.0)
+        self.sharpness_var        = tk.DoubleVar(value=0.0)
+        self.mouth_mask_var       = tk.BooleanVar(value=False)
+        self.mouth_mask_size_var  = tk.DoubleVar(value=0.0)
+        self.mirror_var           = tk.BooleanVar(value=False)
+        self.many_faces_var       = tk.BooleanVar(value=False)
+        self.poisson_blend_var    = tk.BooleanVar(value=False)
+        self.interpolation_var    = tk.BooleanVar(value=True)
+        self.show_fps_var         = tk.BooleanVar(value=False)
+        self._controls_visible    = False
+        self._fps_deque           = deque(maxlen=30)  # timestamps for FPS calc
+
         # ── layout ────────────────────────────────────────────────────────────
         self._build_ui()
         self._populate_face_gallery()
@@ -112,6 +126,7 @@ class DeepFakeLab(tk.Tk):
 
         self._build_left_panel(content)
         self._build_right_panel(content)
+        self._build_controls_panel(outer)
         self._build_bottom_bar(outer)
 
     # ── LEFT PANEL ────────────────────────────────────────────────────────────
@@ -222,6 +237,16 @@ class DeepFakeLab(tk.Tk):
         self.cam_dropdown.pack(side=tk.LEFT, padx=(4, 0))
         self.cam_dropdown.bind("<<ComboboxSelected>>", self._on_camera_change)
 
+        # Controls toggle button
+        self.controls_toggle_btn = tk.Button(
+            toolbar, text="⚙️ Show Controls",
+            font=FONT_BODY, bg=PANEL, fg=TEXT_DIM,
+            activebackground=PANEL, activeforeground=ACCENT,
+            relief=tk.FLAT, cursor="hand2",
+            command=self._toggle_controls
+        )
+        self.controls_toggle_btn.pack(side=tk.RIGHT, padx=(8, 0))
+
         # status bar
         self.status_var = tk.StringVar(value="Ready")
         status_bar = tk.Label(
@@ -230,6 +255,149 @@ class DeepFakeLab(tk.Tk):
             anchor="w", padx=10
         )
         status_bar.pack(fill=tk.X, side=tk.BOTTOM)
+
+    # ── CONTROLS PANEL ────────────────────────────────────────────────────────
+    def _build_controls_panel(self, parent):
+        """Collapsible controls panel — hidden by default."""
+        self._controls_frame = tk.Frame(parent, bg=PANEL, bd=0,
+                                        highlightbackground=BORDER_OFF,
+                                        highlightthickness=1)
+        # NOT packed yet — toggled in/out
+
+        inner = tk.Frame(self._controls_frame, bg=PANEL)
+        inner.pack(fill=tk.BOTH, expand=True, padx=10, pady=6)
+
+        # ── helpers ───────────────────────────────────────────────────────────
+        def label(parent, text, dim=False):
+            fg = TEXT_DIM if dim else TEXT_MAIN
+            return tk.Label(parent, text=text, font=FONT_SMALL,
+                            bg=PANEL, fg=fg, anchor="w")
+
+        def note(parent, text):
+            return tk.Label(parent, text=text, font=("Courier", 8),
+                            bg=PANEL, fg=TEXT_DIM, anchor="w")
+
+        def slider(parent, var, from_, to, resolution=0.01):
+            return tk.Scale(parent, variable=var, from_=from_, to=to,
+                            resolution=resolution, orient=tk.HORIZONTAL,
+                            length=180, bg=PANEL, fg=TEXT_MAIN,
+                            highlightthickness=0, troughcolor=BORDER_OFF,
+                            activebackground=ACCENT, sliderrelief=tk.FLAT,
+                            command=lambda v: self._sync_globals())
+
+        def checkbox(parent, text, var):
+            return tk.Checkbutton(parent, text=text, variable=var,
+                                  font=FONT_SMALL, bg=PANEL, fg=TEXT_MAIN,
+                                  selectcolor=PANEL, activebackground=PANEL,
+                                  activeforeground=ACCENT, cursor="hand2",
+                                  command=self._sync_globals)
+
+        # ── left column (col 0) ───────────────────────────────────────────────
+        col0 = tk.Frame(inner, bg=PANEL)
+        col0.grid(row=0, column=0, sticky="nw", padx=(0, 20))
+
+        # 1. Opacity
+        label(col0, "Blend Opacity").pack(anchor="w")
+        opacity_row = tk.Frame(col0, bg=PANEL)
+        opacity_row.pack(anchor="w", fill=tk.X)
+        slider(opacity_row, self.opacity_var, 0.0, 1.0).pack(side=tk.LEFT)
+        note(opacity_row, "  How much of the fake face shows").pack(
+            side=tk.LEFT, padx=(4, 0))
+
+        # 2. Sharpness
+        label(col0, "Sharpness").pack(anchor="w", pady=(6, 0))
+        slider(col0, self.sharpness_var, 0.0, 1.0).pack(anchor="w")
+
+        # 3. Mouth Mask
+        mouth_row = tk.Frame(col0, bg=PANEL)
+        mouth_row.pack(anchor="w", pady=(6, 0), fill=tk.X)
+        self.mouth_mask_cb = checkbox(mouth_row, "👄 Mouth Mask",
+                                      self.mouth_mask_var)
+        self.mouth_mask_cb.pack(side=tk.LEFT)
+        note(mouth_row, "  Keeps YOUR mouth so lip-sync looks real").pack(
+            side=tk.LEFT, padx=(4, 0))
+
+        self._mouth_size_frame = tk.Frame(col0, bg=PANEL)
+        self._mouth_size_frame.pack(anchor="w", fill=tk.X)
+        label(self._mouth_size_frame, "   Mask Size").pack(
+            side=tk.LEFT)
+        self._mouth_size_slider = slider(
+            self._mouth_size_frame, self.mouth_mask_size_var, 0, 100,
+            resolution=1)
+        self._mouth_size_slider.pack(side=tk.LEFT)
+
+        # Show/hide mouth size slider based on mouth_mask toggle
+        def _on_mouth_toggle(*_):
+            self._sync_globals()
+            if self.mouth_mask_var.get():
+                self._mouth_size_frame.pack(anchor="w", fill=tk.X)
+            else:
+                self._mouth_size_frame.pack_forget()
+
+        self.mouth_mask_var.trace_add("write", _on_mouth_toggle)
+        # Start hidden
+        self._mouth_size_frame.pack_forget()
+
+        # 4. Mirror
+        checkbox(col0, "🪞 Mirror", self.mirror_var).pack(
+            anchor="w", pady=(6, 0))
+
+        # ── right column (col 1) ──────────────────────────────────────────────
+        col1 = tk.Frame(inner, bg=PANEL)
+        col1.grid(row=0, column=1, sticky="nw")
+
+        # 5. Many Faces
+        mf_row = tk.Frame(col1, bg=PANEL)
+        mf_row.pack(anchor="w")
+        checkbox(mf_row, "👥 Swap All Faces", self.many_faces_var).pack(
+            side=tk.LEFT)
+        note(mf_row, "  Swap every face in the frame at once").pack(
+            side=tk.LEFT, padx=(4, 0))
+
+        # 6. Poisson Blend
+        pb_row = tk.Frame(col1, bg=PANEL)
+        pb_row.pack(anchor="w", pady=(6, 0))
+        checkbox(pb_row, "🎨 Poisson Blend", self.poisson_blend_var).pack(
+            side=tk.LEFT)
+        note(pb_row, "  Smoother edges around the swapped face").pack(
+            side=tk.LEFT, padx=(4, 0))
+
+        # 7. Interpolation
+        checkbox(col1, "⚡ Smooth Motion", self.interpolation_var).pack(
+            anchor="w", pady=(6, 0))
+
+        # 8. Show FPS
+        checkbox(col1, "📊 Show FPS", self.show_fps_var).pack(
+            anchor="w", pady=(6, 0))
+
+    def _toggle_controls(self):
+        if self._controls_visible:
+            self._controls_frame.pack_forget()
+            self.controls_toggle_btn.configure(text="⚙️ Show Controls",
+                                               fg=TEXT_DIM)
+            self._controls_visible = False
+        else:
+            # Insert before the bottom bar (pack order matters)
+            self._controls_frame.pack(fill=tk.X, pady=(4, 0))
+            self.controls_toggle_btn.configure(text="⚙️ Hide Controls",
+                                               fg=ACCENT)
+            self._controls_visible = True
+
+    def _sync_globals(self, *_):
+        """Push all control vars into modules.globals in real time."""
+        try:
+            import modules.globals as gm
+            gm.opacity              = self.opacity_var.get()
+            gm.sharpness            = self.sharpness_var.get()
+            gm.mouth_mask           = self.mouth_mask_var.get()
+            gm.mouth_mask_size      = self.mouth_mask_size_var.get()
+            gm.live_mirror          = self.mirror_var.get()
+            gm.many_faces           = self.many_faces_var.get()
+            gm.poisson_blend        = self.poisson_blend_var.get()
+            gm.enable_interpolation = self.interpolation_var.get()
+            gm.show_fps             = self.show_fps_var.get()
+        except Exception:
+            pass
 
     # ── BOTTOM BAR ────────────────────────────────────────────────────────────
     def _build_bottom_bar(self, parent):
@@ -488,6 +656,7 @@ class DeepFakeLab(tk.Tk):
         self.after(0, lambda: self._set_status("Camera running…"))
         process_frame_fn  = None   # lazy load
         enhance_frame_fn  = None   # lazy load
+        self._fps_deque.clear()
 
         while self.camera_running:
             ret, frame = cap.read()
@@ -566,6 +735,36 @@ class DeepFakeLab(tk.Tk):
                 self.after(0, lambda: self._set_status("No face selected"))
                 self._reset_steps()
 
+            # ── mirror ───────────────────────────────────────────────────────
+            try:
+                import modules.globals as _gm
+                if _gm.live_mirror:
+                    display = cv2.flip(display, 1)
+            except Exception:
+                if self.mirror_var.get():
+                    display = cv2.flip(display, 1)
+
+            # ── FPS overlay ───────────────────────────────────────────────────
+            try:
+                import modules.globals as _gm
+                _show_fps = _gm.show_fps
+            except Exception:
+                _show_fps = self.show_fps_var.get()
+
+            now_ts = time.monotonic()
+            self._fps_deque.append(now_ts)
+            if _show_fps and len(self._fps_deque) >= 2:
+                elapsed = self._fps_deque[-1] - self._fps_deque[0]
+                fps_val = (len(self._fps_deque) - 1) / elapsed if elapsed > 0 else 0
+                fps_text = f"FPS: {fps_val:.0f}"
+                text_size, _ = cv2.getTextSize(fps_text, cv2.FONT_HERSHEY_SIMPLEX,
+                                               0.6, 1)
+                tx = display.shape[1] - text_size[0] - 10
+                ty = 22
+                cv2.putText(display, fps_text, (tx, ty),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6,
+                            (0, 211, 83), 1, cv2.LINE_AA)
+
             # convert BGR → RGB → PhotoImage
             self.current_frame = display.copy()
             if PIL_OK:
@@ -613,13 +812,22 @@ class DeepFakeLab(tk.Tk):
     def _init_globals(self):
         try:
             import modules.globals as gm
-            gm.source_path         = self.selected_face_path
-            gm.execution_providers = ["CPUExecutionProvider"]
-            gm.execution_threads   = 4
-            gm.many_faces          = False
-            gm.map_faces           = False
-            gm.color_correction    = False
-            gm.nsfw_filter         = False
+            gm.source_path          = self.selected_face_path
+            gm.execution_providers  = ["CPUExecutionProvider"]
+            gm.execution_threads    = 4
+            gm.map_faces            = False
+            gm.color_correction     = False
+            gm.nsfw_filter          = False
+            # ── controls ─────────────────────────────────────────────────────
+            gm.opacity              = self.opacity_var.get()
+            gm.sharpness            = self.sharpness_var.get()
+            gm.mouth_mask           = self.mouth_mask_var.get()
+            gm.mouth_mask_size      = self.mouth_mask_size_var.get()
+            gm.live_mirror          = self.mirror_var.get()
+            gm.many_faces           = self.many_faces_var.get()
+            gm.poisson_blend        = self.poisson_blend_var.get()
+            gm.enable_interpolation = self.interpolation_var.get()
+            gm.show_fps             = self.show_fps_var.get()
             # frame processors list drives which models are active
             procs = ["face_swapper"]
             if self.enhance_enabled.get():
