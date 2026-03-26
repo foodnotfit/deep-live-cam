@@ -84,6 +84,9 @@ class DeepFakeLab(tk.Tk):
         self.current_frame    = None          # numpy BGR frame
         self.tk_image         = None          # keep reference alive
         self.face_swapper_loaded = False
+        self.face_enhancer_loaded = False
+        self.face_enhancer_loading = False
+        self.enhance_enabled = tk.BooleanVar(value=True)  # ON by default
         self.face_swapper_loading = False
         self.camera_index     = tk.IntVar(value=0)
         self.step_active      = [False, False, False, False]  # bottom bar steps
@@ -197,6 +200,17 @@ class DeepFakeLab(tk.Tk):
             command=self._take_snapshot, state=tk.DISABLED
         )
         self.snap_btn.pack(side=tk.LEFT, padx=(0, 8))
+
+        # AI Enhance toggle
+        self.enhance_btn = tk.Checkbutton(
+            toolbar, text="✨ AI Enhance",
+            variable=self.enhance_enabled,
+            font=FONT_BODY_B, bg=PANEL, fg=ACCENT,
+            selectcolor=PANEL, activebackground=PANEL,
+            activeforeground=ACCENT, cursor="hand2",
+            command=self._on_enhance_toggle
+        )
+        self.enhance_btn.pack(side=tk.LEFT, padx=(0, 12))
 
         # camera selector
         tk.Label(toolbar, text="Cam:", font=FONT_BODY,
@@ -472,7 +486,8 @@ class DeepFakeLab(tk.Tk):
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_H)
 
         self.after(0, lambda: self._set_status("Camera running…"))
-        process_frame_fn = None   # lazy load
+        process_frame_fn  = None   # lazy load
+        enhance_frame_fn  = None   # lazy load
 
         while self.camera_running:
             ret, frame = cap.read()
@@ -504,6 +519,25 @@ class DeepFakeLab(tk.Tk):
                         self.after(0, lambda e=ex: self._set_status(
                             f"Swap load error: {e}"))
 
+                # ── lazy load GFPGAN face enhancer ───────────────────────────
+                enhance_model = os.path.join(ROOT, "models", "gfpgan-1024.onnx")
+                if (self.enhance_enabled.get()
+                        and not self.face_enhancer_loaded
+                        and not self.face_enhancer_loading
+                        and os.path.exists(enhance_model)):
+                    self.face_enhancer_loading = True
+                    try:
+                        from modules.processors.frame.face_enhancer import (
+                            pre_check as _enh_check,
+                            process_frame as _ef
+                        )
+                        if _enh_check():
+                            enhance_frame_fn = _ef
+                            self.face_enhancer_loaded = True
+                        self.face_enhancer_loading = False
+                    except Exception:
+                        self.face_enhancer_loading = False
+
                 # ── run swap ─────────────────────────────────────────────────
                 if self.face_swapper_loaded and process_frame_fn:
                     try:
@@ -514,11 +548,20 @@ class DeepFakeLab(tk.Tk):
                         if swapped is not None:
                             display = swapped
                             self._highlight_step(2)  # warp
+                            # ── AI enhancement pass (GFPGAN) ─────────────
+                            if self.enhance_enabled.get() and enhance_frame_fn:
+                                try:
+                                    enhanced = enhance_frame_fn(display)
+                                    if enhanced is not None:
+                                        display = enhanced
+                                except Exception:
+                                    pass
                             self._highlight_step(3)  # blend
                     except Exception:
                         pass  # fall back to raw feed silently
-                    self.after(0, lambda n=self.selected_face_name:
-                               self._set_status(f"Swapping: {n}"))
+                    ai_tag = " ✨ AI Enhanced" if (self.enhance_enabled.get() and self.face_enhancer_loaded) else ""
+                    self.after(0, lambda n=self.selected_face_name, t=ai_tag:
+                               self._set_status(f"🤖 Swapping: {n}{t}"))
             else:
                 self.after(0, lambda: self._set_status("No face selected"))
                 self._reset_steps()
@@ -544,16 +587,44 @@ class DeepFakeLab(tk.Tk):
     # Face swapper globals init
     # =========================================================================
 
+    def _on_enhance_toggle(self):
+        if self.enhance_enabled.get():
+            model_path = os.path.join(ROOT, "models", "gfpgan-1024.onnx")
+            if not os.path.exists(model_path):
+                self._set_status("⏳ GFPGAN model not found — downloading...")
+                threading.Thread(target=self._download_enhancer_model, daemon=True).start()
+            else:
+                self._set_status("✨ AI Enhancement ON — GFPGAN ready")
+        else:
+            self._set_status("AI Enhancement OFF")
+
+    def _download_enhancer_model(self):
+        import urllib.request
+        url = "https://huggingface.co/hacksider/deep-live-cam/resolve/main/gfpgan-1024.onnx"
+        dest = os.path.join(ROOT, "models", "gfpgan-1024.onnx")
+        try:
+            self.after(0, lambda: self._set_status("⏳ Downloading GFPGAN model (~300MB)..."))
+            urllib.request.urlretrieve(url, dest)
+            self.face_enhancer_loaded = False  # trigger reload
+            self.after(0, lambda: self._set_status("✅ GFPGAN downloaded — AI Enhancement active!"))
+        except Exception as e:
+            self.after(0, lambda: self._set_status(f"❌ Download failed: {e}"))
+
     def _init_globals(self):
         try:
             import modules.globals as gm
-            gm.source_path        = self.selected_face_path
+            gm.source_path         = self.selected_face_path
             gm.execution_providers = ["CPUExecutionProvider"]
-            gm.execution_threads  = 4
-            gm.many_faces         = False
-            gm.map_faces          = False
-            gm.color_correction   = False
-            gm.nsfw_filter        = False
+            gm.execution_threads   = 4
+            gm.many_faces          = False
+            gm.map_faces           = False
+            gm.color_correction    = False
+            gm.nsfw_filter         = False
+            # frame processors list drives which models are active
+            procs = ["face_swapper"]
+            if self.enhance_enabled.get():
+                procs.append("face_enhancer")
+            gm.frame_processors = procs
         except Exception:
             pass
 
