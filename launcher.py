@@ -424,7 +424,11 @@ class DeepFakeLab(tk.Tk):
         cap = cv2.VideoCapture(idx)
         if not cap.isOpened():
             self.after(0, lambda: self._set_status(
-                f"⚠ Camera {idx} not available"))
+                "⚠ Camera access denied — go to System Settings → Privacy & Security → Camera → enable Terminal"))
+            self.after(0, lambda: self._draw_placeholder(
+                "📷 Camera Permission Required\n\n"
+                "System Settings → Privacy & Security\n"
+                "→ Camera → enable Terminal"))
             self.after(0, self._stop_camera)
             return
 
