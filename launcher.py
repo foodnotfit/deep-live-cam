@@ -24,6 +24,12 @@ except ImportError:
     CV2_OK = False
 
 try:
+    from cv2_enumerate_cameras import enumerate_cameras
+    CV2_ENUM_OK = True
+except ImportError:
+    CV2_ENUM_OK = False
+
+try:
     from PIL import Image, ImageTk, ImageDraw
     PIL_OK = True
 except ImportError:
@@ -40,12 +46,17 @@ TEXT_DIM    = "#8b949e"
 THUMB_SIZE  = 120
 CAM_W, CAM_H = 640, 480
 
-FONT_MONO   = ("Courier", 11)
-FONT_MONO_B = ("Courier", 13, "bold")
-FONT_BODY   = ("Helvetica", 11)
-FONT_BODY_B = ("Helvetica", 13, "bold")
-FONT_TITLE  = ("Helvetica", 16, "bold")
-FONT_SMALL  = ("Courier", 9)
+import platform as _platform
+_IS_WINDOWS = _platform.system().lower() == "windows"
+_IS_MAC     = _platform.system().lower() == "darwin"
+
+# Use cross-platform safe fonts
+FONT_MONO   = ("Courier",       11)
+FONT_MONO_B = ("Courier",       13, "bold")
+FONT_BODY   = ("Arial" if _IS_WINDOWS else "Helvetica", 11)
+FONT_BODY_B = ("Arial" if _IS_WINDOWS else "Helvetica", 13, "bold")
+FONT_TITLE  = ("Arial" if _IS_WINDOWS else "Helvetica", 16, "bold")
+FONT_SMALL  = ("Courier",        9)
 
 FACES_DIR     = os.path.join(ROOT, "faces")
 SNAPSHOTS_DIR = os.path.join(ROOT, "snapshots")
@@ -371,19 +382,40 @@ class DeepFakeLab(tk.Tk):
 
     def _populate_camera_list(self):
         if not CV2_OK:
-            self.cam_dropdown["values"] = [0]
+            self.cam_dropdown["values"] = ["0"]
             self.cam_dropdown.current(0)
             return
-        cams = []
-        for i in range(5):
-            cap = cv2.VideoCapture(i)
-            if cap.isOpened():
-                cams.append(i)
-                cap.release()
-        if not cams:
-            cams = [0]
-        self.cam_dropdown["values"] = cams
+
+        cam_options = []
+        self._cam_index_map = {}  # label → index
+
+        if CV2_ENUM_OK:
+            # Rich enumeration — shows camera names (great for external USB cams on Windows)
+            try:
+                for cam_info in enumerate_cameras(cv2.CAP_ANY):
+                    label = f"{cam_info.index}: {cam_info.name[:30]}"
+                    cam_options.append(label)
+                    self._cam_index_map[label] = cam_info.index
+            except Exception:
+                pass
+
+        if not cam_options:
+            # Fallback: probe indices 0–9
+            for i in range(10):
+                cap = cv2.VideoCapture(i, cv2.CAP_DSHOW if _IS_WINDOWS else cv2.CAP_ANY)
+                if cap.isOpened():
+                    label = f"Camera {i}"
+                    cam_options.append(label)
+                    self._cam_index_map[label] = i
+                    cap.release()
+
+        if not cam_options:
+            cam_options = ["Camera 0"]
+            self._cam_index_map["Camera 0"] = 0
+
+        self.cam_dropdown["values"] = cam_options
         self.cam_dropdown.current(0)
+        self.camera_index = tk.StringVar(value=cam_options[0])
 
     def _toggle_camera(self):
         if self.camera_running:
@@ -420,15 +452,19 @@ class DeepFakeLab(tk.Tk):
     # =========================================================================
 
     def _camera_loop(self):
-        idx = self.camera_index.get()
-        cap = cv2.VideoCapture(idx)
+        cam_label = self.camera_index.get()
+        idx = getattr(self, "_cam_index_map", {}).get(cam_label, 0)
+        backend = cv2.CAP_DSHOW if _IS_WINDOWS else cv2.CAP_ANY
+        cap = cv2.VideoCapture(idx, backend)
         if not cap.isOpened():
-            self.after(0, lambda: self._set_status(
-                "⚠ Camera access denied — go to System Settings → Privacy & Security → Camera → enable Terminal"))
-            self.after(0, lambda: self._draw_placeholder(
-                "📷 Camera Permission Required\n\n"
-                "System Settings → Privacy & Security\n"
-                "→ Camera → enable Terminal"))
+            if _IS_MAC:
+                msg = "⚠ Camera denied — System Settings → Privacy & Security → Camera → enable Terminal"
+                placeholder = "📷 Camera Permission Required\n\nSystem Settings → Privacy & Security\n→ Camera → enable Terminal"
+            else:
+                msg = "⚠ Camera not available — check it's plugged in and not used by another app"
+                placeholder = "📷 Camera Not Available\n\nCheck it is plugged in\nand not in use by another app"
+            self.after(0, lambda: self._set_status(msg))
+            self.after(0, lambda: self._draw_placeholder(placeholder))
             self.after(0, self._stop_camera)
             return
 

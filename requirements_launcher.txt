@@ -1,0 +1,12 @@
+# Core deps (all platforms)
+numpy
+opencv-python
+onnx
+onnxruntime
+insightface
+psutil
+customtkinter
+pillow
+protobuf
+typing-extensions
+cv2_enumerate_cameras
