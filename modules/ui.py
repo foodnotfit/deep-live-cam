@@ -1052,10 +1052,25 @@ def get_available_cameras():
         if platform.system() == "Darwin":
             # Do NOT probe cameras with cv2.VideoCapture on macOS — probing
             # invalid indices triggers the OBSENSOR backend and causes SIGSEGV.
-            # Default to indices 0 and 1 (covers FaceTime + one USB camera).
-            # The user can select the correct index from the UI dropdown.
-            camera_indices = [0, 1]
-            camera_names = ["Camera 0", "Camera 1"]
+            # Instead, use cv2_enumerate_cameras (AVFoundation) when available
+            # to discover real devices; fall back to indices 0 and 1.
+            try:
+                from cv2_enumerate_cameras import enumerate_cameras, CAP_AVFOUNDATION
+                devices = enumerate_cameras(CAP_AVFOUNDATION)
+                if devices:
+                    camera_indices = [d.index for d in devices]
+                    camera_names = [
+                        d.name if d.name else f"Camera {d.index}"
+                        for d in devices
+                    ]
+                else:
+                    # No cameras detected at all
+                    camera_indices = []
+                    camera_names = []
+            except Exception:
+                # cv2_enumerate_cameras not available — safe fallback
+                camera_indices = [0, 1]
+                camera_names = ["Camera 0", "Camera 1"]
         else:
             # Linux camera detection - test first 10 indices
             for i in range(10):
@@ -1063,7 +1078,7 @@ def get_available_cameras():
                 if cap.isOpened():
                     camera_indices.append(i)
                     camera_names.append(f"Camera {i}")
-                    cap.release()
+                cap.release()
 
         if not camera_names:
             return [], ["No cameras found"]
@@ -1314,7 +1329,7 @@ def create_webcam_preview(camera_index: int):
             )
         else:
             temp_frame = fit_image_to_size(
-                temp_frame, PREVIEW.winfo_width(), PREVIEW.winfo_height()
+                temp_frame, PREVIEW_DEFAULT_WIDTH, PREVIEW_DEFAULT_HEIGHT
             )
 
         image = gpu_cvt_color(temp_frame, cv2.COLOR_BGR2RGB)

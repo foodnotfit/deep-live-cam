@@ -15,7 +15,7 @@ def get_video_frame(video_path: str, frame_number: int = 0) -> Any:
         capture.set(cv2.CAP_PROP_CONVERT_RGB, 1)
     
     frame_total = capture.get(cv2.CAP_PROP_FRAME_COUNT)
-    capture.set(cv2.CAP_PROP_POS_FRAMES, min(frame_total, frame_number - 1))
+    capture.set(cv2.CAP_PROP_POS_FRAMES, max(0, min(frame_total, frame_number - 1)))
     has_frame, frame = capture.read()
 
     if has_frame and modules.globals.color_correction:

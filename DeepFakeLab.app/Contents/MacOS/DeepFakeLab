@@ -1,0 +1,4 @@
+#!/bin/bash
+export HOME="/Users/foodnotfit"
+cd "$HOME/Desktop/deep-live-cam"
+exec "$HOME/Desktop/deep-live-cam/.venv/bin/python" "$HOME/Desktop/deep-live-cam/launcher.py"

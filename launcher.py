@@ -17,6 +17,26 @@ from collections import deque
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
+# ── inject venv site-packages so Python.app bundle can find cv2/onnxruntime ──
+# Only inject the venv that matches the RUNNING Python version exactly.
+import sysconfig as _sysconfig
+_pyver = f"python{_sysconfig.get_python_version()}"  # e.g. "python3.12"
+for _venv_name in (".venv312", ".venv"):
+    _venv_site = os.path.join(ROOT, _venv_name, "lib")
+    _match = os.path.join(_venv_site, _pyver, "site-packages")
+    if os.path.isdir(_match) and _match not in sys.path:
+        sys.path.insert(1, _match)
+        break  # only inject ONE venv — the first exact version match
+
+def _check_macos_camera_status():
+    """Returns 0=undetermined, 2=denied, 3=authorized"""
+    try:
+        import AVFoundation
+        return int(AVFoundation.AVCaptureDevice.authorizationStatusForMediaType_(
+            AVFoundation.AVMediaTypeVideo))
+    except Exception:
+        return 3  # assume authorized on non-macOS
+
 # ── optional heavy imports (handled gracefully) ───────────────────────────────
 try:
     import cv2
@@ -110,6 +130,8 @@ class DeepFakeLab(tk.Tk):
         self._build_ui()
         self._populate_face_gallery()
         self._populate_camera_list()
+        # Request camera permission after window is visible
+        self.after(500, self._ensure_camera_permission)
 
     # =========================================================================
     # UI construction
@@ -562,6 +584,63 @@ class DeepFakeLab(tk.Tk):
     # Camera helpers
     # =========================================================================
 
+    def _ensure_camera_permission(self):
+        """
+        Request macOS camera permission with the Tkinter window already visible
+        so the system dialog has an app context to attach to.
+        Runs in a background thread to avoid blocking the UI.
+        """
+        import platform as _plat
+        if _plat.system().lower() != 'darwin':
+            return
+        status = _check_macos_camera_status()
+        if status == 3:
+            return  # already authorized
+        if status == 2:
+            self._set_status("⚠ Camera denied — go to System Settings → Privacy & Security → Camera")
+            return
+        # Not determined — request in background thread (handler will fire on main thread)
+        self._set_status("📷 Requesting camera permission…")
+        threading.Thread(target=self._request_camera_bg, daemon=True).start()
+
+    def _request_camera_bg(self):
+        """Request camera permission.
+
+        On macOS Sequoia 15+, AVCaptureDevice.requestAccessForMediaType must be
+        triggered from the main NSRunLoop.  We pump it via Tkinter's after()
+        loop so the system dialog can attach to the frontmost window.
+        """
+        try:
+            import AVFoundation
+            from AppKit import NSRunLoop, NSDate
+
+            done = threading.Event()
+            result = [False]
+
+            def handler(granted):
+                result[0] = granted
+                done.set()
+
+            # Fire the OS request — dialog will attach to the running NSApp window
+            AVFoundation.AVCaptureDevice.requestAccessForMediaType_completionHandler_(
+                AVFoundation.AVMediaTypeVideo, handler)
+
+            # Pump MAIN runloop (Tk shares CFRunLoop with NSRunLoop on macOS)
+            # so the dialog can surface.  We do short ticks and check done flag.
+            deadline = time.time() + 60
+            loop = NSRunLoop.mainRunLoop()
+            while not done.is_set() and time.time() < deadline:
+                loop.runUntilDate_(NSDate.dateWithTimeIntervalSinceNow_(0.1))
+
+            if result[0]:
+                self.after(0, lambda: self._set_status("✅ Camera permission granted — press ▶ START CAMERA"))
+                self.after(0, self._populate_camera_list)
+            else:
+                self.after(0, lambda: self._set_status(
+                    "❌ Camera denied — System Settings → Privacy & Security → Camera → enable Python"))
+        except Exception as e:
+            self.after(0, lambda: self._set_status(f"Camera permission check failed: {e}"))
+
     def _populate_camera_list(self):
         if not CV2_OK:
             self.cam_dropdown["values"] = ["0"]
@@ -571,8 +650,9 @@ class DeepFakeLab(tk.Tk):
         cam_options = []
         self._cam_index_map = {}  # label → index
 
-        if CV2_ENUM_OK:
+        if CV2_ENUM_OK and not _IS_MAC:
             # Rich enumeration — shows camera names (great for external USB cams on Windows)
+            # Skip on macOS — triggers camera permission request before dialog is ready
             try:
                 for cam_info in enumerate_cameras(cv2.CAP_ANY):
                     label = f"{cam_info.index}: {cam_info.name[:30]}"
@@ -582,14 +662,19 @@ class DeepFakeLab(tk.Tk):
                 pass
 
         if not cam_options:
-            # Fallback: probe indices 0–9
-            for i in range(10):
-                cap = cv2.VideoCapture(i, cv2.CAP_DSHOW if _IS_WINDOWS else cv2.CAP_ANY)
-                if cap.isOpened():
-                    label = f"Camera {i}"
-                    cam_options.append(label)
-                    self._cam_index_map[label] = i
-                    cap.release()
+            # On macOS, skip probing (triggers denied dialog) — just list defaults
+            if _IS_MAC:
+                cam_options = ["FaceTime HD Camera", "Camera 1", "Camera 2"]
+                self._cam_index_map = {"FaceTime HD Camera": 0, "Camera 1": 1, "Camera 2": 2}
+            else:
+                # Fallback: probe indices 0–9
+                for i in range(10):
+                    cap = cv2.VideoCapture(i, cv2.CAP_DSHOW if _IS_WINDOWS else cv2.CAP_ANY)
+                    if cap.isOpened():
+                        label = f"Camera {i}"
+                        cam_options.append(label)
+                        self._cam_index_map[label] = i
+                        cap.release()
 
         if not cam_options:
             cam_options = ["Camera 0"]
