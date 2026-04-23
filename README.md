@@ -17,88 +17,225 @@
 ## ⚡ Quick Start — Pick Your OS
 
 > **Not sure where to start? Follow the guide for your operating system below.**
+> 📄 Full step-by-step guide with troubleshooting: [INSTALL.md](INSTALL.md)
 
 ---
 
-### 🪟 Windows (Dell / HP / Any PC)
+## 🖥️ Step 0 — Check Your GPU First (Do This Before Installing)
 
-**Requirements:**
-- Windows 10 or 11
-- Python 3.11 — [Download from python.org](https://www.python.org/downloads/release/python-3119/) ⚠️ Check **"Add Python to PATH"** during install
-- Git — [Download from git-scm.com](https://git-scm.com/download/win)
-- ffmpeg — run in PowerShell: `iex (irm ffmpeg.tc.ht)`
+Knowing your GPU determines which version to run.
 
-**Steps:**
+### Windows — How to Check Your GPU
 
+**Option A — Task Manager (easiest):**
+1. Press `Ctrl + Shift + Esc` to open Task Manager
+2. Click the **Performance** tab
+3. Look at the left panel for entries like:
+   - `GPU 0 — NVIDIA GeForce RTX 3060` → use `run-cuda.bat`
+   - `GPU 0 — AMD Radeon RX 6600` → use `run-directml.bat`
+   - `GPU 0 — Intel UHD Graphics 620` → use `launch.bat`
+
+**Option B — PowerShell (one command):**
+```powershell
+Get-WmiObject Win32_VideoController | Select-Object Name, AdapterRAM
 ```
-1. Open a terminal (PowerShell or Command Prompt)
-2. git clone https://github.com/foodnotfit/deep-live-cam.git
-3. cd deep-live-cam
-4. Double-click: setup_windows.bat   ← installs everything automatically
-5. Double-click: launch.bat          ← starts the app
-```
 
-**GPU Acceleration (optional but faster):**
+**Option C — Device Manager:**
+1. Press `Windows + X` → click **Device Manager**
+2. Expand **Display adapters** — your GPU name is listed there
 
-| Your GPU | File to run |
-|----------|-------------|
-| NVIDIA (GeForce, RTX, GTX) | `run-cuda.bat` |
-| AMD (Radeon) | `run-directml.bat` |
-| No GPU / Integrated | `launch.bat` |
+### macOS — How to Check Your GPU
 
-> `setup_windows.bat` auto-detects your GPU and installs the right packages.
+**Option A — About This Mac:**
+1. Click the Apple menu → **About This Mac**
+2. Look for the **Graphics** or **Chip** row:
+   - `Apple M1 / M2 / M3 / M4` → Apple Silicon → use CoreML (fast)
+   - `AMD Radeon Pro` → Intel Mac → CPU mode
+   - `Intel Iris / UHD` → integrated → CPU mode
 
----
-
-### 🍎 macOS (MacBook, iMac, Mac Mini)
-
-**Requirements:**
-- macOS 12 or later
-- Homebrew — [brew.sh](https://brew.sh)
-- Python 3.11 via Homebrew
-
-**Steps:**
-
+**Option B — Terminal (one command):**
 ```bash
-# 1. Install Homebrew (if not installed)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+system_profiler SPDisplaysDataType | grep "Chipset Model"
+```
 
-# 2. Install dependencies
-brew install python@3.11 ffmpeg git
+### GPU → Launch Mode Reference
 
-# 3. Clone the repo
+| GPU You See | Platform | What to Run |
+|---|---|---|
+| NVIDIA GeForce / RTX / GTX | Windows | `run-cuda.bat` |
+| AMD Radeon | Windows | `run-directml.bat` |
+| Intel HD / UHD / Iris | Windows | `launch.bat` |
+| No dedicated GPU | Windows | `launch.bat` |
+| Apple M1 / M2 / M3 / M4 | macOS | `python run.py --execution-provider coreml` |
+| AMD Radeon (Intel Mac) | macOS | `python run.py` |
+| Intel (Mac) | macOS | `python run.py` |
+
+---
+
+### 🪟 Windows — Step-by-Step Installation
+
+#### Step 1 — Install Python 3.11
+
+1. Go to: https://www.python.org/downloads/release/python-3119/
+2. Scroll to the bottom → click **Windows installer (64-bit)**
+3. Run the installer
+4. ⚠️ **On the first screen, check "Add Python 3.11 to PATH"** before clicking Install Now — this is critical
+5. Click **Install Now** and wait for it to finish → click **Close**
+
+**Verify — open PowerShell and run:**
+```powershell
+python --version
+```
+Expected: `Python 3.11.x`
+
+**If you see "not recognized" — fix PATH manually:**
+1. Search Windows for **"Edit the system environment variables"**
+2. Click **Environment Variables**
+3. Under **User variables**, find `Path` → click **Edit**
+4. Click **New** → add: `C:\Users\YourUsername\AppData\Local\Programs\Python\Python311\`
+5. Click **New** again → add: `C:\Users\YourUsername\AppData\Local\Programs\Python\Python311\Scripts\`
+6. Click OK on all windows, close and reopen PowerShell, try `python --version` again
+
+#### Step 2 — Install Git
+
+1. Go to: https://git-scm.com/download/win
+2. Download starts automatically — run the installer
+3. Click **Next** through all options (defaults are fine) → **Install** → **Finish**
+
+**Verify:**
+```powershell
+git --version
+```
+
+#### Step 3 — Install ffmpeg
+
+1. Open **PowerShell as Administrator** (press `Windows + X` → Terminal/PowerShell Admin)
+2. Run:
+```powershell
+iex (irm ffmpeg.tc.ht)
+```
+3. Wait for it to complete → close and reopen PowerShell
+
+**Verify:**
+```powershell
+ffmpeg -version
+```
+
+#### Step 4 — Clone the Repository
+
+```powershell
+cd C:\Users\YourUsername\Desktop
 git clone https://github.com/foodnotfit/deep-live-cam.git
 cd deep-live-cam
+```
 
-# 4. Set up virtual environment
+#### Step 5 — Run Setup
+
+1. Open **File Explorer** → navigate to the `deep-live-cam` folder
+2. Double-click **`setup_windows.bat`**
+3. A terminal opens and runs automatically — this will:
+   - Detect your GPU
+   - Create a Python virtual environment
+   - Install all required packages
+   - Download the face swap AI model (~265MB)
+4. Wait for completion (5–15 min depending on internet speed)
+
+#### Step 6 — Launch the App
+
+| GPU | Launch file |
+|---|---|
+| NVIDIA (RTX / GTX / GeForce) | Double-click `run-cuda.bat` |
+| AMD Radeon | Double-click `run-directml.bat` |
+| Intel / No GPU | Double-click `launch.bat` |
+
+---
+
+### 🍎 macOS — Step-by-Step Installation
+
+#### Step 1 — Install Homebrew
+
+1. Open **Terminal** (`Cmd + Space` → type Terminal → Enter)
+2. Paste and run:
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+3. Enter your password when prompted
+4. **Apple Silicon only** — after install, run these two lines to add Homebrew to PATH:
+```bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+**Verify:**
+```bash
+brew --version
+```
+
+#### Step 2 — Install Python 3.11, ffmpeg, and Git
+
+```bash
+brew install python@3.11 ffmpeg git
+```
+
+**Add Python 3.11 to PATH so it's used by default:**
+```bash
+echo 'export PATH="/opt/homebrew/opt/python@3.11/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**Verify all three:**
+```bash
+python3.11 --version
+ffmpeg -version
+git --version
+```
+
+#### Step 3 — Clone the Repository
+
+```bash
+cd ~/Desktop
+git clone https://github.com/foodnotfit/deep-live-cam.git
+cd deep-live-cam
+```
+
+#### Step 4 — Create Virtual Environment and Install Packages
+
+```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-
-# 5. Run the app
-python run.py
 ```
 
-**Camera Permission (macOS Sequoia 15+):**
+#### Step 5 — Download the Face Model
 
-On first run, macOS will ask for camera access. If it doesn't appear automatically:
-
-1. Open **System Settings → Privacy & Security → Camera**
-2. Click **`+`** → press **`⌘ Shift G`** → paste:
-   ```
-   /usr/local/Cellar/python@3.13/3.13.12_1/Frameworks/Python.framework/Versions/3.13/Resources/Python.app
-   ```
-3. Toggle it **ON**
-
-> See `CAMERA_FIX.md` for full troubleshooting details.
-
-**GPU Acceleration (Apple Silicon M1/M2/M3/M4):**
 ```bash
-pip uninstall onnxruntime
+mkdir -p models
+curl -L "https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx" -o models/inswapper_128_fp16.onnx
+```
+~265MB — wait for the download to complete.
+
+#### Step 6 — Launch the App
+
+**Apple Silicon (M1/M2/M3/M4):**
+```bash
+pip uninstall onnxruntime -y
 pip install onnxruntime-silicon==1.13.1
 python run.py --execution-provider coreml
 ```
 
+**Intel Mac:**
+```bash
+python run.py
+```
+
+#### Step 7 — Camera Permission (macOS only)
+
+On first run, macOS will ask for camera access. If the prompt doesn't appear:
+1. Go to **System Settings → Privacy & Security → Camera**
+2. Click **+** → press `Cmd + Shift + G` → paste the Python path shown in your terminal
+3. Toggle it **ON**
+
+> See `CAMERA_FIX.md` for full troubleshooting details.
 ---
 
 ### 🐧 Linux
