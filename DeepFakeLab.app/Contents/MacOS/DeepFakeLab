@@ -1,4 +1,6 @@
 #!/bin/bash
-export HOME="/Users/foodnotfit"
-cd "$HOME/Desktop/deep-live-cam"
-exec "$HOME/Desktop/deep-live-cam/.venv/bin/python" "$HOME/Desktop/deep-live-cam/launcher.py"
+# Resolve the workspace from the .app bundle location:
+#   <workspace>/DeepFakeLab.app/Contents/MacOS/DeepFakeLab → <workspace>
+APP_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
+cd "$APP_DIR"
+exec "$APP_DIR/.venv/bin/python" "$APP_DIR/launcher.py"

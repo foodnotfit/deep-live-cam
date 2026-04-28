@@ -1,7 +1,8 @@
 import os
 import sys
-# single thread doubles cuda performance - needs to be set before torch import
-if any(arg.startswith('--execution-provider') for arg in sys.argv):
+# single thread doubles CUDA performance — but cripples CPU/CoreML on Apple Silicon.
+# Only apply this when CUDA is the actual provider, not for any --execution-provider flag.
+if 'cuda' in sys.argv:
     os.environ['OMP_NUM_THREADS'] = '1'
 # reduce tensorflow log level
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'

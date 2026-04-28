@@ -81,10 +81,22 @@ FONT_SMALL  = ("Courier",        9)
 
 FACES_DIR     = os.path.join(ROOT, "faces")
 SNAPSHOTS_DIR = os.path.join(ROOT, "snapshots")
+LOG_PATH      = os.path.join(ROOT, "deepfake_lab.log")
 
 # ── ensure directories exist ──────────────────────────────────────────────────
 os.makedirs(FACES_DIR,     exist_ok=True)
 os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+
+
+def _log(msg: str) -> None:
+    """Append a timestamped line to deepfake_lab.log (visible on .app launch)."""
+    try:
+        ts = datetime.datetime.now().strftime("%H:%M:%S")
+        with open(LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(f"[{ts}] {msg}\n")
+    except Exception:
+        pass
+    print(msg)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -92,8 +104,9 @@ class DeepFakeLab(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("🎭 DeepFake Lab — Family Edition")
-        self.geometry("1100x700")
-        self.resizable(False, False)
+        self.geometry("1100x820")
+        self.minsize(900, 720)
+        self.resizable(True, True)
         self.configure(bg=BG)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
@@ -398,12 +411,15 @@ class DeepFakeLab(tk.Tk):
             self.controls_toggle_btn.configure(text="⚙️ Show Controls",
                                                fg=TEXT_DIM)
             self._controls_visible = False
+            self.geometry("1100x820")
         else:
-            # Insert before the bottom bar (pack order matters)
-            self._controls_frame.pack(fill=tk.X, pady=(4, 0))
+            # Re-pack BEFORE the bottom bar so the bottom bar stays visible.
+            self._controls_frame.pack(fill=tk.X, pady=(4, 0),
+                                      before=self._bottom_bar)
             self.controls_toggle_btn.configure(text="⚙️ Hide Controls",
                                                fg=ACCENT)
             self._controls_visible = True
+            self.geometry("1100x980")
 
     def _sync_globals(self, *_):
         """Push all control vars into modules.globals in real time."""
@@ -426,6 +442,7 @@ class DeepFakeLab(tk.Tk):
         bar = tk.Frame(parent, bg="#0a0f15", height=40)
         bar.pack(fill=tk.X, pady=(6, 0))
         bar.pack_propagate(False)
+        self._bottom_bar = bar
 
         steps = [
             ("1. AI detects your face", 0),
@@ -537,6 +554,7 @@ class DeepFakeLab(tk.Tk):
         border_frame.configure(bg=BORDER_SEL)
         self.selected_face_path = path
         self.selected_face_name = name
+        self._source_face = None  # invalidate cached source face — recomputed on next frame
         self.selected_label.configure(
             text=f"Selected: {name}", fg=ACCENT)
 
@@ -766,10 +784,14 @@ class DeepFakeLab(tk.Tk):
                         process_frame_fn = _pf
                         self.face_swapper_loaded = True
                         self.face_swapper_loading = False
+                        _log("Face swapper loaded successfully")
                         self.after(0, lambda: self._set_status(
                             f"Swapping: {self.selected_face_name}"))
                     except Exception as ex:
                         self.face_swapper_loading = False
+                        import traceback
+                        _log(f"Swap LOAD error: {type(ex).__name__}: {ex}")
+                        _log(traceback.format_exc())
                         self.after(0, lambda e=ex: self._set_status(
                             f"Swap load error: {e}"))
 
@@ -796,9 +818,23 @@ class DeepFakeLab(tk.Tk):
                 if self.face_swapper_loaded and process_frame_fn:
                     try:
                         self._init_globals()
+
+                        # Lazily compute source Face object from the selected image.
+                        # process_frame(source_face, frame) requires a Face, not a path.
+                        if getattr(self, "_source_face", None) is None:
+                            from modules.face_analyser import get_one_face
+                            src_img = cv2.imread(self.selected_face_path)
+                            if src_img is None:
+                                raise RuntimeError(
+                                    f"Could not read source image: {self.selected_face_path}")
+                            self._source_face = get_one_face(src_img)
+                            if self._source_face is None:
+                                raise RuntimeError(
+                                    f"No face detected in source image: {self.selected_face_name}")
+
                         self._highlight_step(0)  # face detected
                         self._highlight_step(1)  # landmarks
-                        swapped = process_frame_fn(display)
+                        swapped = process_frame_fn(self._source_face, display)
                         if swapped is not None:
                             display = swapped
                             self._highlight_step(2)  # warp
@@ -808,11 +844,17 @@ class DeepFakeLab(tk.Tk):
                                     enhanced = enhance_frame_fn(display)
                                     if enhanced is not None:
                                         display = enhanced
-                                except Exception:
-                                    pass
+                                except Exception as enh_ex:
+                                    print(f"[enhance] {type(enh_ex).__name__}: {enh_ex}")
                             self._highlight_step(3)  # blend
-                    except Exception:
-                        pass  # fall back to raw feed silently
+                    except Exception as swap_ex:
+                        # Surface the error instead of silently swallowing it
+                        import traceback
+                        tb = traceback.format_exc()
+                        _log(f"Swap RUN error: {type(swap_ex).__name__}: {swap_ex}")
+                        _log(tb)
+                        self.after(0, lambda e=swap_ex: self._set_status(
+                            f"Swap error: {type(e).__name__}: {str(e)[:60]}"))
                     ai_tag = " ✨ AI Enhanced" if (self.enhance_enabled.get() and self.face_enhancer_loaded) else ""
                     self.after(0, lambda n=self.selected_face_name, t=ai_tag:
                                self._set_status(f"🤖 Swapping: {n}{t}"))

@@ -25,12 +25,18 @@ def get_face_analyser() -> Any:
         with FACE_ANALYSER_LOCK:
             # Double-check after acquiring lock
             if FACE_ANALYSER is None:
+                # Force CPU for buffalo_l detection — onnxruntime's CoreML EP has
+                # a shape-rank validation bug with retinaface (det_10g) that crashes
+                # the worker thread. Detection on CPU runs in ~30-50ms which is fine.
+                # The heavy inswapper face-swap still uses the user's chosen provider
+                # (CoreML when --execution-provider coreml is passed), which gives us
+                # Neural Engine acceleration where it actually matters.
                 FACE_ANALYSER = insightface.app.FaceAnalysis(
                     name='buffalo_l',
-                    providers=modules.globals.execution_providers,
+                    providers=['CPUExecutionProvider'],
                     allowed_modules=['detection', 'recognition', 'landmark_2d_106']
                 )
-                FACE_ANALYSER.prepare(ctx_id=0, det_size=(640, 640))
+                FACE_ANALYSER.prepare(ctx_id=0, det_size=(320, 320))
     return FACE_ANALYSER
 
 
