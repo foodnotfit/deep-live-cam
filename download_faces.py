@@ -27,47 +27,12 @@ HERE = Path(__file__).resolve().parent
 FACES_DIR = HERE / "faces"
 FACES_DIR.mkdir(exist_ok=True)
 
-# Curated list — diverse historical/cultural figures kids learn about in school,
-# all with reliable Creative Commons or public-domain Wikipedia portraits.
+# Curated list — heavily weighted toward current pop culture (music, actors,
+# athletes) for maximum kid-recognition, with a small set of high-impact
+# historical icons. All sourced from Wikipedia's CC-licensed lead images.
 # Format: (filename_slug, wikipedia_page_title, why_kids_recognize)
 ENTRIES = [
-    # Scientists
-    ("einstein",          "Albert_Einstein",          "iconic hair / 'I'm a genius!'"),
-    ("marie_curie",       "Marie_Curie",              "first female Nobel winner"),
-    ("nikola_tesla",      "Nikola_Tesla",             "kids love the Tesla connection"),
-    ("charles_darwin",    "Charles_Darwin",           "evolution / iconic beard"),
-    ("stephen_hawking",   "Stephen_Hawking",          "well-known modern scientist"),
-
-    # Civil rights & social leaders
-    ("mlk",               "Martin_Luther_King_Jr.",   "kids learn about him"),
-    ("rosa_parks",        "Rosa_Parks",               "civil rights icon"),
-    ("gandhi",            "Mahatma_Gandhi",           "kids learn about him"),
-    ("malala",            "Malala_Yousafzai",         "young + relatable to kids"),
-
-    # Historical leaders
-    ("lincoln",           "Abraham_Lincoln",          "beard + top hat, very recognizable"),
-    ("george_washington", "George_Washington",        "first US president"),
-    ("queen_elizabeth_1", "Elizabeth_I",              "regal Tudor portrait"),
-
-    # Artists
-    ("frida_kahlo",       "Frida_Kahlo",              "distinctive, strong female artist"),
-    ("picasso",           "Pablo_Picasso",            "famous painter"),
-
-    # Adventurers / firsts
-    ("amelia_earhart",    "Amelia_Earhart",           "pilot, brave, female"),
-    ("neil_armstrong",    "Neil_Armstrong",           "first man on the moon"),
-
-    # Cultural icons
-    ("bruce_lee",         "Bruce_Lee",                "martial artist, very cool factor"),
-    ("mozart",            "Wolfgang_Amadeus_Mozart",  "child prodigy composer"),
-
-    # Authors
-    ("shakespeare",       "William_Shakespeare",      "kids learn about him"),
-    ("mark_twain",        "Mark_Twain",               "white hair + mustache"),
-
-    # --- Current pop music / culture (CC-licensed Wikipedia event photos) ---
-    # Kids respond hardest to music artists they hear on TikTok / streaming.
-    # Mix of English-language and Latin/Spanish-language artists for diversity.
+    # === Music — English-language ===
     ("bad_bunny",         "Bad_Bunny",                "Latin music superstar, kid-iconic"),
     ("beyonce",           "Beyoncé",                  "global icon"),
     ("billie_eilish",     "Billie_Eilish",            "huge with kids/teens"),
@@ -76,38 +41,91 @@ ENTRIES = [
     ("selena_gomez",      "Selena_Gomez",             "Disney + music + acting"),
     ("olivia_rodrigo",    "Olivia_Rodrigo",           "huge with younger kids"),
     ("bruno_mars",        "Bruno_Mars",               "broad appeal across ages"),
-    ("lizzo",             "Lizzo",                    "personality kids love"),
     ("adele",             "Adele",                    "globally iconic voice"),
     ("harry_styles",      "Harry_Styles",             "huge teen following"),
-    ("shakira",           "Shakira",                  "Latin music icon, global"),
     ("the_weeknd",        "The_Weeknd",               "current charts staple"),
     ("rihanna",           "Rihanna",                  "music + Fenty cultural icon"),
     ("ariana_grande",     "Ariana_Grande",            "music + voice acting"),
+    ("doja_cat",          "Doja_Cat",                 "TikTok-era kid favorite"),
+    ("dua_lipa",          "Dua_Lipa",                 "global pop, Barbie soundtrack"),
+    ("lizzo",             "Lizzo",                    "personality kids love"),
+    ("post_malone",       "Post_Malone",              "huge with older kids"),
+    ("kendrick_lamar",    "Kendrick_Lamar",           "Grammy-winning rapper"),
 
-    # Actors kids know from current movies (CC-licensed event/portrait photos)
+    # === Music — Latin / Spanish-language ===
+    ("shakira",           "Shakira",                  "Latin music icon, global"),
+    ("karol_g",           "Karol_G",                  "Colombian Latin pop star"),
+    ("rosalia",           "Rosalía",                  "Spanish flamenco/pop"),
+    ("j_balvin",          "J_Balvin",                 "Colombian reggaeton star"),
+
+    # === Music — K-pop (huge with kids globally) ===
+    ("lisa_blackpink",    "Lisa_(rapper)",            "Blackpink, kid-iconic in K-pop"),
+    ("jungkook",          "Jungkook",                 "BTS lead vocalist"),
+    ("rm_bts",            "RM_(rapper)",              "BTS leader"),
+
+    # === Actors kids know from current movies ===
     ("zendaya",           "Zendaya",                  "Spider-Man, Euphoria, Dune"),
     ("tom_holland",       "Tom_Holland",              "Spider-Man for current kids"),
-    ("tom_hanks",         "Tom_Hanks",                "Toy Story voice — broad family appeal"),
+    ("dwayne_johnson",    "Dwayne_Johnson",           "The Rock — kids love him"),
+    ("will_smith",        "Will_Smith",               "Aladdin, kids' movies"),
+    ("pedro_pascal",      "Pedro_Pascal",             "Mandalorian, Last of Us"),
+    ("margot_robbie",     "Margot_Robbie",            "Barbie, huge kid-recognition"),
+    ("ryan_reynolds",     "Ryan_Reynolds",            "Deadpool, kid-friendly humor"),
+    ("tom_hanks",         "Tom_Hanks",                "Toy Story voice — family appeal"),
 
-    # Athletes — universally kid-engaging across regions
+    # === Athletes — universally kid-engaging across regions ===
     ("lebron_james",      "LeBron_James",             "basketball icon"),
     ("cristiano_ronaldo", "Cristiano_Ronaldo",        "global soccer star"),
     ("lionel_messi",      "Lionel_Messi",             "global soccer star"),
     ("serena_williams",   "Serena_Williams",          "tennis legend"),
     ("simone_biles",      "Simone_Biles",             "gymnast, Olympic icon"),
+
+    # === Historical icons (kept short — only the most visually recognizable) ===
+    ("einstein",          "Albert_Einstein",          "iconic hair / 'I'm a genius!'"),
+    ("lincoln",           "Abraham_Lincoln",          "beard + top hat, very recognizable"),
+    ("mlk",               "Martin_Luther_King_Jr.",   "kids learn about him"),
+    ("marie_curie",       "Marie_Curie",              "first female Nobel winner"),
+    ("frida_kahlo",       "Frida_Kahlo",              "distinctive, strong female artist"),
+    ("bruce_lee",         "Bruce_Lee",                "martial artist, very cool factor"),
+    ("mozart",            "Wolfgang_Amadeus_Mozart",  "child prodigy composer"),
+    ("gandhi",            "Mahatma_Gandhi",           "kids learn about him"),
 ]
 
-USER_AGENT = ("DeepLiveCamFamilyDay/1.0 "
-              "(educational demo; contact: local installation)")
+# Wikimedia's policy requires a real, identifying User-Agent.
+# https://meta.wikimedia.org/wiki/User-Agent_policy
+USER_AGENT = ("DeepLiveCamFamilyDay/1.0 (educational classroom demo; "
+              "https://github.com/foodnotfit/deep-live-cam) Python-urllib")
+
+
+def _request_with_retry(url: str, timeout: int = 30, max_retries: int = 4) -> bytes:
+    """Fetch a URL, respecting 429 Retry-After headers and backing off."""
+    delay = 2.0  # base wait before retrying after a 429
+    for attempt in range(max_retries):
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < max_retries - 1:
+                # Honor server-suggested Retry-After if present, else exponential backoff
+                retry_after = e.headers.get("Retry-After")
+                if retry_after and retry_after.isdigit():
+                    wait = float(retry_after)
+                else:
+                    wait = delay
+                print(f"        rate-limited; waiting {wait:.0f}s before retry "
+                      f"(attempt {attempt+2}/{max_retries})...")
+                time.sleep(wait)
+                delay = min(delay * 2, 60)  # cap exponential at 60s
+                continue
+            raise
 
 
 def fetch_image_url(page_title: str) -> str:
     """Query Wikipedia's REST API for the canonical lead image URL of a page."""
     title = urllib.parse.quote(page_title)
     api_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
-    req = urllib.request.Request(api_url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        data = json.loads(resp.read())
+    data = json.loads(_request_with_retry(api_url, timeout=15))
     # Prefer originalimage (full resolution) over thumbnail
     if "originalimage" in data and "source" in data["originalimage"]:
         return data["originalimage"]["source"]
@@ -118,9 +136,7 @@ def fetch_image_url(page_title: str) -> str:
 
 def download(url: str, dest: Path) -> int:
     """Download a URL to disk. Returns bytes written."""
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        data = resp.read()
+    data = _request_with_retry(url, timeout=30)
     dest.write_bytes(data)
     return len(data)
 
@@ -149,7 +165,7 @@ def main() -> int:
             n = download(url, dest)
             print(f"  [  OK ] {slug:22s}  {note} ({n//1024} KB)")
             successes.append(slug)
-            time.sleep(0.5)  # polite rate limiting on Wikipedia API
+            time.sleep(2.0)  # polite rate limiting — Wikimedia 429s aggressively
         except Exception as e:
             print(f"  [FAIL ] {slug:22s}  {type(e).__name__}: {str(e)[:60]}")
             failures.append((slug, str(e)))

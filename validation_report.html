@@ -1,0 +1,459 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Face validation report</title>
+<style>
+  body { font-family: -apple-system, sans-serif; background: #0d1117; color: #e6edf3; padding: 20px; }
+  h1 { color: #39d353; }
+  .stats { font-size: 14px; color: #8b949e; margin-bottom: 20px; }
+  .stats span { margin-right: 18px; }
+  .stats .ok { color: #39d353; }
+  .stats .warn { color: #d29922; }
+  .stats .fail { color: #f85149; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px; text-align: left; border-bottom: 1px solid #30363d; vertical-align: middle; }
+  th { background: #161b22; }
+  td.badge { font-weight: bold; white-space: nowrap; }
+  tr.row-ok td.badge { color: #39d353; }
+  tr.row-warn td.badge { color: #d29922; }
+  tr.row-fail td.badge { color: #f85149; }
+  td.name { width: 180px; }
+  td.name small { color: #8b949e; }
+  td.result img { height: 256px; border-radius: 4px; }
+  td.result .no-result { color: #8b949e; font-style: italic; padding: 20px; }
+  td.warnings { width: 280px; color: #8b949e; font-size: 13px; }
+</style></head>
+<body>
+  <h1>Face validation report</h1>
+  <div class="stats">
+    <span>Total: <b>60</b></span>
+    <span class="ok">OK: <b>58</b></span>
+    <span class="warn">Warnings: <b>2</b></span>
+    <span class="fail">Failures: <b>0</b></span>
+    <span>Target: faces/obama.jpg</span>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Status</th><th>Source</th><th>Source &rarr; Swap result</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+    <tr class="row-warn">
+      <td class="badge">⚠ WARN</td>
+      <td class="name">american_gothic<br><small>662x800</small></td>
+      <td class="result"><img src="validation_report/american_gothic_result.jpg" alt="swap of american_gothic"></td>
+      <td class="warnings">2 faces detected — using largest</td>
+    </tr>
+    
+    <tr class="row-warn">
+      <td class="badge">⚠ WARN</td>
+      <td class="name">lebron_james<br><small>1197x1387</small></td>
+      <td class="result"><img src="validation_report/lebron_james_result.jpg" alt="swap of lebron_james"></td>
+      <td class="warnings">2 faces detected — using largest</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">Carlos Embury<br><small>1440x960</small></td>
+      <td class="result"><img src="validation_report/Carlos Embury_result.jpg" alt="swap of Carlos Embury"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">adele<br><small>1607x2134</small></td>
+      <td class="result"><img src="validation_report/adele_result.jpg" alt="swap of adele"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">ariana_grande<br><small>517x701</small></td>
+      <td class="result"><img src="validation_report/ariana_grande_result.jpg" alt="swap of ariana_grande"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">bad_bunny<br><small>2650x4010</small></td>
+      <td class="result"><img src="validation_report/bad_bunny_result.jpg" alt="swap of bad_bunny"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">beethoven<br><small>330x397</small></td>
+      <td class="result"><img src="validation_report/beethoven_result.jpg" alt="swap of beethoven"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">beyonce<br><small>900x1200</small></td>
+      <td class="result"><img src="validation_report/beyonce_result.jpg" alt="swap of beyonce"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">billie_eilish<br><small>779x1039</small></td>
+      <td class="result"><img src="validation_report/billie_eilish_result.jpg" alt="swap of billie_eilish"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">bruce_lee<br><small>2017x2516</small></td>
+      <td class="result"><img src="validation_report/bruce_lee_result.jpg" alt="swap of bruce_lee"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">bruno_mars<br><small>1100x1505</small></td>
+      <td class="result"><img src="validation_report/bruno_mars_result.jpg" alt="swap of bruno_mars"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">charles_darwin<br><small>2370x3119</small></td>
+      <td class="result"><img src="validation_report/charles_darwin_result.jpg" alt="swap of charles_darwin"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">cristiano_ronaldo<br><small>566x650</small></td>
+      <td class="result"><img src="validation_report/cristiano_ronaldo_result.jpg" alt="swap of cristiano_ronaldo"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">doja_cat<br><small>2314x3072</small></td>
+      <td class="result"><img src="validation_report/doja_cat_result.jpg" alt="swap of doja_cat"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">drake<br><small>690x956</small></td>
+      <td class="result"><img src="validation_report/drake_result.jpg" alt="swap of drake"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">dua_lipa<br><small>1780x2737</small></td>
+      <td class="result"><img src="validation_report/dua_lipa_result.jpg" alt="swap of dua_lipa"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">dwayne_johnson<br><small>3796x4381</small></td>
+      <td class="result"><img src="validation_report/dwayne_johnson_result.jpg" alt="swap of dwayne_johnson"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">einstein<br><small>3840x4753</small></td>
+      <td class="result"><img src="validation_report/einstein_result.jpg" alt="swap of einstein"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">frida_kahlo<br><small>1197x1795</small></td>
+      <td class="result"><img src="validation_report/frida_kahlo_result.jpg" alt="swap of frida_kahlo"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">gandhi<br><small>2620x3270</small></td>
+      <td class="result"><img src="validation_report/gandhi_result.jpg" alt="swap of gandhi"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">girl_pearl_earring<br><small>675x800</small></td>
+      <td class="result"><img src="validation_report/girl_pearl_earring_result.jpg" alt="swap of girl_pearl_earring"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">harry_styles<br><small>1490x1987</small></td>
+      <td class="result"><img src="validation_report/harry_styles_result.jpg" alt="swap of harry_styles"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">j_balvin<br><small>844x1125</small></td>
+      <td class="result"><img src="validation_report/j_balvin_result.jpg" alt="swap of j_balvin"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">jungkook<br><small>1398x2010</small></td>
+      <td class="result"><img src="validation_report/jungkook_result.jpg" alt="swap of jungkook"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">justin_bieber<br><small>980x1401</small></td>
+      <td class="result"><img src="validation_report/justin_bieber_result.jpg" alt="swap of justin_bieber"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">karol_g<br><small>1920x2880</small></td>
+      <td class="result"><img src="validation_report/karol_g_result.jpg" alt="swap of karol_g"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">kendrick_lamar<br><small>1116x1558</small></td>
+      <td class="result"><img src="validation_report/kendrick_lamar_result.jpg" alt="swap of kendrick_lamar"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">lincoln<br><small>2126x2835</small></td>
+      <td class="result"><img src="validation_report/lincoln_result.jpg" alt="swap of lincoln"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">lionel_messi<br><small>1021x1365</small></td>
+      <td class="result"><img src="validation_report/lionel_messi_result.jpg" alt="swap of lionel_messi"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">lisa_blackpink<br><small>846x1158</small></td>
+      <td class="result"><img src="validation_report/lisa_blackpink_result.jpg" alt="swap of lisa_blackpink"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">lizzo<br><small>464x632</small></td>
+      <td class="result"><img src="validation_report/lizzo_result.jpg" alt="swap of lizzo"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">margot_robbie<br><small>714x935</small></td>
+      <td class="result"><img src="validation_report/margot_robbie_result.jpg" alt="swap of margot_robbie"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">marie_curie<br><small>1549x2105</small></td>
+      <td class="result"><img src="validation_report/marie_curie_result.jpg" alt="swap of marie_curie"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">mark_twain<br><small>756x1061</small></td>
+      <td class="result"><img src="validation_report/mark_twain_result.jpg" alt="swap of mark_twain"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">mlk<br><small>992x1488</small></td>
+      <td class="result"><img src="validation_report/mlk_result.jpg" alt="swap of mlk"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">mona_lisa<br><small>402x599</small></td>
+      <td class="result"><img src="validation_report/mona_lisa_result.jpg" alt="swap of mona_lisa"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">mozart<br><small>1617x2155</small></td>
+      <td class="result"><img src="validation_report/mozart_result.jpg" alt="swap of mozart"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">nikola_tesla<br><small>940x1260</small></td>
+      <td class="result"><img src="validation_report/nikola_tesla_result.jpg" alt="swap of nikola_tesla"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">obama<br><small>500x624</small></td>
+      <td class="result"><img src="validation_report/obama_result.jpg" alt="swap of obama"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">olivia_rodrigo<br><small>1252x1532</small></td>
+      <td class="result"><img src="validation_report/olivia_rodrigo_result.jpg" alt="swap of olivia_rodrigo"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">pedro_pascal<br><small>1855x2653</small></td>
+      <td class="result"><img src="validation_report/pedro_pascal_result.jpg" alt="swap of pedro_pascal"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">post_malone<br><small>1985x2601</small></td>
+      <td class="result"><img src="validation_report/post_malone_result.jpg" alt="swap of post_malone"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">president_biden<br><small>500x625</small></td>
+      <td class="result"><img src="validation_report/president_biden_result.jpg" alt="swap of president_biden"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">rihanna<br><small>651x867</small></td>
+      <td class="result"><img src="validation_report/rihanna_result.jpg" alt="swap of rihanna"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">rm_bts<br><small>1316x1612</small></td>
+      <td class="result"><img src="validation_report/rm_bts_result.jpg" alt="swap of rm_bts"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">rosalia<br><small>1540x2055</small></td>
+      <td class="result"><img src="validation_report/rosalia_result.jpg" alt="swap of rosalia"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">ryan_reynolds<br><small>1761x2641</small></td>
+      <td class="result"><img src="validation_report/ryan_reynolds_result.jpg" alt="swap of ryan_reynolds"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">selena_gomez<br><small>1551x2090</small></td>
+      <td class="result"><img src="validation_report/selena_gomez_result.jpg" alt="swap of selena_gomez"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">serena_williams<br><small>2066x3137</small></td>
+      <td class="result"><img src="validation_report/serena_williams_result.jpg" alt="swap of serena_williams"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">shakira<br><small>1590x2120</small></td>
+      <td class="result"><img src="validation_report/shakira_result.jpg" alt="swap of shakira"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">simone_biles<br><small>2838x4096</small></td>
+      <td class="result"><img src="validation_report/simone_biles_result.jpg" alt="swap of simone_biles"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">stephen_hawking<br><small>250x359</small></td>
+      <td class="result"><img src="validation_report/stephen_hawking_result.jpg" alt="swap of stephen_hawking"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">taylor_swift<br><small>500x711</small></td>
+      <td class="result"><img src="validation_report/taylor_swift_result.jpg" alt="swap of taylor_swift"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">the_weeknd<br><small>1281x1920</small></td>
+      <td class="result"><img src="validation_report/the_weeknd_result.jpg" alt="swap of the_weeknd"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">tom_hanks<br><small>1126x1562</small></td>
+      <td class="result"><img src="validation_report/tom_hanks_result.jpg" alt="swap of tom_hanks"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">tom_holland<br><small>1906x2859</small></td>
+      <td class="result"><img src="validation_report/tom_holland_result.jpg" alt="swap of tom_holland"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">trump<br><small>500x633</small></td>
+      <td class="result"><img src="validation_report/trump_result.jpg" alt="swap of trump"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">van_gogh_self<br><small>658x800</small></td>
+      <td class="result"><img src="validation_report/van_gogh_self_result.jpg" alt="swap of van_gogh_self"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">will_smith<br><small>1296x1753</small></td>
+      <td class="result"><img src="validation_report/will_smith_result.jpg" alt="swap of will_smith"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">zendaya<br><small>2490x3735</small></td>
+      <td class="result"><img src="validation_report/zendaya_result.jpg" alt="swap of zendaya"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    </tbody>
+  </table>
+</body></html>
