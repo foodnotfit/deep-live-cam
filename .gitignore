@@ -32,3 +32,4 @@ models/*.pth
 .venv312/
 *.jpg
 *.jpeg
+.DS_Store
