@@ -89,6 +89,23 @@ ENTRIES = [
     ("bruce_lee",         "Bruce_Lee",                "martial artist, very cool factor"),
     ("mozart",            "Wolfgang_Amadeus_Mozart",  "child prodigy composer"),
     ("gandhi",            "Mahatma_Gandhi",           "kids learn about him"),
+
+    # === Family Day additions: classic-actor lineup + current SecDef ===
+    ("morgan_freeman",    "Morgan_Freeman",           "iconic voice + face"),
+    ("tom_cruise",        "Tom_Cruise",               "Top Gun, Mission: Impossible"),
+    ("denzel_washington", "Denzel_Washington",        "Hollywood legend"),
+    ("brad_pitt",         "Brad_Pitt",                "Ocean's Eleven, instantly recognizable"),
+    ("george_clooney",    "George_Clooney",           "Ocean's Eleven, broad recognition"),
+    ("secdef_hegseth",    "Pete_Hegseth",             "U.S. Secretary of Defense"),
+]
+
+# Direct-URL entries — figures without a Wikipedia page. The Wikipedia REST API
+# can't reach these, so we fetch the official portrait from the source agency.
+# Format: (filename_slug, image_url, note)
+DIRECT_URL_ENTRIES = [
+    ("darpa_director_winchell",
+     "https://www.darpa.mil/sites/default/files/gallery/2026-03/stephen-winchell-director-darpa-2026.jpg",
+     "Stephen Winchell, 24th DARPA Director (DARPA official portrait)"),
 ]
 
 # Wikimedia's policy requires a real, identifying User-Agent.
@@ -166,6 +183,25 @@ def main() -> int:
             print(f"  [  OK ] {slug:22s}  {note} ({n//1024} KB)")
             successes.append(slug)
             time.sleep(2.0)  # polite rate limiting — Wikimedia 429s aggressively
+        except Exception as e:
+            print(f"  [FAIL ] {slug:22s}  {type(e).__name__}: {str(e)[:60]}")
+            failures.append((slug, str(e)))
+
+    for slug, url, note in DIRECT_URL_ENTRIES:
+        existing = list(FACES_DIR.glob(f"{slug}.*"))
+        if existing:
+            print(f"  [skip ] {slug:22s}  already exists")
+            skipped.append(slug)
+            continue
+        try:
+            ext = url.rsplit(".", 1)[-1].lower()
+            if ext not in ("jpg", "jpeg", "png", "webp"):
+                ext = "jpg"
+            dest = FACES_DIR / f"{slug}.{ext}"
+            n = download(url, dest)
+            print(f"  [  OK ] {slug:22s}  {note} ({n//1024} KB)")
+            successes.append(slug)
+            time.sleep(1.0)
         except Exception as e:
             print(f"  [FAIL ] {slug:22s}  {type(e).__name__}: {str(e)[:60]}")
             failures.append((slug, str(e)))

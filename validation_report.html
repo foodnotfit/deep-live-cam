@@ -24,10 +24,10 @@
 <body>
   <h1>Face validation report</h1>
   <div class="stats">
-    <span>Total: <b>60</b></span>
-    <span class="ok">OK: <b>58</b></span>
+    <span>Total: <b>69</b></span>
+    <span class="ok">OK: <b>65</b></span>
     <span class="warn">Warnings: <b>2</b></span>
-    <span class="fail">Failures: <b>0</b></span>
+    <span class="fail">Failures: <b>2</b></span>
     <span>Target: faces/obama.jpg</span>
   </div>
   <table>
@@ -35,6 +35,20 @@
       <tr><th>Status</th><th>Source</th><th>Source &rarr; Swap result</th><th>Notes</th></tr>
     </thead>
     <tbody>
+    <tr class="row-fail">
+      <td class="badge">✗ FAIL</td>
+      <td class="name">tom_brady<br><small>400x500</small></td>
+      <td class="result"><div class="no-result">no swap (face not detected)</div></td>
+      <td class="warnings">No face detected — try a more front-facing photo</td>
+    </tr>
+    
+    <tr class="row-fail">
+      <td class="badge">✗ FAIL</td>
+      <td class="name">your_photo<br><small>400x500</small></td>
+      <td class="result"><div class="no-result">no swap (face not detected)</div></td>
+      <td class="warnings">No face detected — try a more front-facing photo</td>
+    </tr>
+    
     <tr class="row-warn">
       <td class="badge">⚠ WARN</td>
       <td class="name">american_gothic<br><small>662x800</small></td>
@@ -100,6 +114,13 @@
     
     <tr class="row-ok">
       <td class="badge">✓ OK</td>
+      <td class="name">brad_pitt<br><small>1683x2244</small></td>
+      <td class="result"><img src="validation_report/brad_pitt_result.jpg" alt="swap of brad_pitt"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
       <td class="name">bruce_lee<br><small>2017x2516</small></td>
       <td class="result"><img src="validation_report/bruce_lee_result.jpg" alt="swap of bruce_lee"></td>
       <td class="warnings">&mdash;</td>
@@ -123,6 +144,20 @@
       <td class="badge">✓ OK</td>
       <td class="name">cristiano_ronaldo<br><small>566x650</small></td>
       <td class="result"><img src="validation_report/cristiano_ronaldo_result.jpg" alt="swap of cristiano_ronaldo"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">darpa_director_winchell<br><small>440x500</small></td>
+      <td class="result"><img src="validation_report/darpa_director_winchell_result.jpg" alt="swap of darpa_director_winchell"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">denzel_washington<br><small>3840x5375</small></td>
+      <td class="result"><img src="validation_report/denzel_washington_result.jpg" alt="swap of denzel_washington"></td>
       <td class="warnings">&mdash;</td>
     </tr>
     
@@ -172,6 +207,13 @@
       <td class="badge">✓ OK</td>
       <td class="name">gandhi<br><small>2620x3270</small></td>
       <td class="result"><img src="validation_report/gandhi_result.jpg" alt="swap of gandhi"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">george_clooney<br><small>3330x4438</small></td>
+      <td class="result"><img src="validation_report/george_clooney_result.jpg" alt="swap of george_clooney"></td>
       <td class="warnings">&mdash;</td>
     </tr>
     
@@ -289,6 +331,13 @@
     
     <tr class="row-ok">
       <td class="badge">✓ OK</td>
+      <td class="name">morgan_freeman<br><small>2253x3006</small></td>
+      <td class="result"><img src="validation_report/morgan_freeman_result.jpg" alt="swap of morgan_freeman"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
       <td class="name">mozart<br><small>1617x2155</small></td>
       <td class="result"><img src="validation_report/mozart_result.jpg" alt="swap of mozart"></td>
       <td class="warnings">&mdash;</td>
@@ -366,6 +415,13 @@
     
     <tr class="row-ok">
       <td class="badge">✓ OK</td>
+      <td class="name">secdef_hegseth<br><small>3840x4969</small></td>
+      <td class="result"><img src="validation_report/secdef_hegseth_result.jpg" alt="swap of secdef_hegseth"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
       <td class="name">selena_gomez<br><small>1551x2090</small></td>
       <td class="result"><img src="validation_report/selena_gomez_result.jpg" alt="swap of selena_gomez"></td>
       <td class="warnings">&mdash;</td>
@@ -410,6 +466,13 @@
       <td class="badge">✓ OK</td>
       <td class="name">the_weeknd<br><small>1281x1920</small></td>
       <td class="result"><img src="validation_report/the_weeknd_result.jpg" alt="swap of the_weeknd"></td>
+      <td class="warnings">&mdash;</td>
+    </tr>
+    
+    <tr class="row-ok">
+      <td class="badge">✓ OK</td>
+      <td class="name">tom_cruise<br><small>1600x2000</small></td>
+      <td class="result"><img src="validation_report/tom_cruise_result.jpg" alt="swap of tom_cruise"></td>
       <td class="warnings">&mdash;</td>
     </tr>
     
