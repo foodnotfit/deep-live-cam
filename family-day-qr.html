@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DARPA Family Day — Try Our Demos!</title>
+  <style>
+    @page { size: landscape; margin: 0.45in; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #fff;
+      color: #1a3a5c;
+      max-width: 10.5in;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      padding: 14px 0 8px;
+      border-bottom: 3px solid #1a3a5c;
+      margin-bottom: 16px;
+    }
+    header h1 { font-size: 1.85rem; text-transform: uppercase; letter-spacing: .04em; }
+    header p  { font-size: .92rem; color: #4a6a8c; margin-top: 5px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0 4px;
+    }
+    .card {
+      border: 2.5px solid #1a3a5c;
+      border-radius: 12px;
+      padding: 16px 12px 12px;
+      text-align: center;
+      background: #f7fafd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      page-break-inside: avoid;
+    }
+    .card-icon { font-size: 2rem; line-height: 1; }
+    .card h2 {
+      font-size: 1rem; color: #1a3a5c;
+      font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .card p {
+      font-size: .8rem; color: #4a6a8c;
+      line-height: 1.4; min-height: 2.4em;
+    }
+    .card img { border-radius: 8px; display: block; }
+    .url {
+      font-size: .64rem; color: #1a3a5c;
+      background: #dce9f5; border-radius: 5px;
+      padding: 3px 7px; width: 100%; word-break: break-all;
+    }
+    footer {
+      text-align: center; margin-top: 14px;
+      padding-top: 8px; border-top: 2px solid #1a3a5c;
+      font-size: .76rem; color: #4a6a8c;
+    }
+    footer strong { color: #1a3a5c; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🔐 DARPA Family Day — Try Our Demos!</h1>
+  <p>Scan a QR code with your phone to explore the project on GitHub!</p>
+</header>
+<div class="grid">
+    <div class="card">
+      <span class="card-icon">🕵️</span>
+      <h2>Family Day Quest</h2>
+      <p>Complete spy missions and cybersecurity challenges!</p>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAIAAADdBSngAAAE9klEQVR4nO3d0Y3jNhSG0dkgnbiRdJLa0kkaUR0LLLBACnAeCIEUP3POebYteeYHhWuSlz9+/vr9BT1/7L4B+H+iSZRoEiWaRIkmUaJJlGgSJZpEiSZRokmUaBL158iLXn/9/bXP9e8/N+7w3rvuXf3eJ99zvd3Puu++zsgdGjWJEk2iRJMo0SRKNPnkCn1W3TpiVuV4r/p+f9esKn7d7wzXpP9F7X9q1CRKNIkSTaJEkyjR5KwKfVYVtm6GeqT6HjGrir939deyWf5ZV193P0ZNokSTKNEkSjSJEk1Or9D3urf2+95r7t3P3t8ZPpFRkyjRJEo0iRJNokSTqEMq9L01+706elYV/7q1Nr7PqEmUaBIlmkSJJlGiyekVeq0qnLXyfNZr1u1DX2fv1Y2aRIkmUaJJlGgSJZqcVaF/4lrr2qz6rD341xHd3d8ZNYkSTaJEkyjRJEo0ifrx89fvr0/T70o3yys2q/4koyZRokmUaBIlmkSJJp9coa/rqNY/D32WWmX92vr/GmHUJEo0iRJNokSTKNEkavM+9FlzxOt6tY148heMa9n6+XvXGnHvDo2aRIkmUaJJlGgSJZqcvsp9b7e0/rr3dd/riu15H7nDEUZNokSTKNEkSjSJEk1OX+U+8q5azf7k59z75He17z5Chc5RPNCJEk2iRJMo0eT7nYd+b761Ntf85Er4kXetq6Nn/WLw/jlWuXMUD3SiRJMo0SRKNDn9tLUnzyBbV4+vmzV+8jz0a1nV/CSjJlGiSZRoEiWaRIkmZ61yf/dktXtGr/JZv05cD+7Tf3K/v1GTKNEkSjSJEk2iRJOz5tDXze2u60W27jeEWd9i79nr17IO8PcYNYkSTaJEkyjRJEo0OauX+5Nzsk/2D3+yu926OfRX/q/qtDU+mAc6UaJJlGgSJZqcPoe+92Tze57ssTarS94V28s/8q57jJpEiSZRokmUaBIlmny/Xu5P7rMe+ZwRtfnxJ68+61qzrm7UJEo0iRJNokSTKNHk9FXue7uK1SrZWa6tf41ZVOgcxQOdKNEkSjSJEk3O6uW+rh7fO/c98q5191Or4kes61xn1CRKNIkSTaJEkyjR5PTz0EfsXQ1+7zV7+8+/tnacG3nXCJ3iOIoHOlGiSZRoEiWafL859L37x9et2b7nyT34ez/5nVXuHMUDnSjRJEo0iRJNvl+nuBGzav91s+Hv1r3ryXPTXlt3LjhtjQ/mgU6UaBIlmkSJJqdX6OvOVvvEbmnf5+y5a9kdGjWJEk2iRJMo0SRKNDmrl/teT57K3Z/lfy37a6z77ubQ+WAe6ESJJlGiSZRo8slz6Hv3dI+sBn83q25dN8u/d+/8K7/n3ahJlGgSJZpEiSZRosnpneJmebJ7+Yi9c9az1Lr2mUPng3mgEyWaRIkmUaLJ6fvQ956mvffq6+b0X5N+i3iy9jeHzuE80IkSTaJEkyjRJGpzL/d1ZnU4H7H39PN71nWtN4fO4TzQiRJNokSTKNEk6pAKfV2PtZFrvZt13tneFeyzVvjbh85RPNCJEk2iRJMo0SRq82lrT15rXc0+q9Zed/XX1k7y9xg1iRJNokSTKNEkSjQ5q0Lf2929v6p81vrwd7PW6s9ai24fOt+OBzpRokmUaBIlmkR95HnofAdGTaJEkyjRJEo0iRJNokSTKNEkSjSJEk2iRJMo0eSr6T8OzwonYtsxgwAAAABJRU5ErkJggg==" alt="QR code for Family Day Quest" width="190" height="190">
+      <div class="url">github.com/foodnotfit/family-day-quest</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">⚛️</span>
+      <h2>Quantum Playground</h2>
+      <p>Superposition, entanglement & quantum code-breaking!</p>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAIAAADdBSngAAAE+ElEQVR4nO3d7Y0bNxSGUTtIJ2oknaS2dJJGVIcBAwZSwBjIYMCPR9xzfmulkfSCs1ckL7//+PnrG/T8sfsC4PdEkyjRJEo0iRJNokSTKNEkSjSJEk2iRJMo0STqzzsPev3197d93v/+M+QKr8/z7K9WfmLvR+991Cc2z50rNGoSJZpEiSZRokmUaPLJFfqourVW296p2UdV8aOq5tejevwTv1OjJlGiSZRoEiWaRIkmZ1Xoo6qweTPUoyrZUVX8s8/ntXWme+V3emXUJEo0iRJNokSTKNHk9Ap9r1GV/rOV8LWV+a9p8+wrGTWJEk2iRJMo0SRKNIk6pEJ/Vu3eqX9HPebO9Vy9vkw9fmXUJEo0iRJNokSTKNHk9Ap9b1U4aq553mPm9XxbucJ/JaMmUaJJlGgSJZpEiSZnVeh790fPs3JWfW/13f9OjZpEiSZRokmUaBIlmnxyhd5fNb2yunxWI4/qLf9euFN+L6MmUaJJlGgSJZpEiSZR33/8/PW/D5pXJ+7t995/F/P036lRkyjRJEo0iRJNokSTs+bQa93S5p0JvrJ33LwrfGbUu3h2hUZNokSTKNEkSjSJEk0+eQ597wx1baZ71HuvvdbVyt9hroyaRIkmUaJJlGgSJZp88hz6ypnTZ+Z1Sh9Vga78nWGeldds1CRKNIkSTaJEkyjR5Kw59DvmVcR3rJztvWPevHZtBn8UoyZRokmUaBIlmkSJJqfPoa9cR72yuhy1Mn/ULP970C8P815r1Cdv1CRKNIkSTaJEkyjR5Kzz0D9xj/nV3nPKRv3y8N66MmHeXxk1iRJNokSTKNEkSjQ5vVNc/5zulfP1tV7ur62d/Z4xahIlmkSJJlGiSZRoctZ56GfsDb/a2wV95a8B74X1uNPWOIobOlGiSZRoEiWaROU6xd15ntr8b+30t/fCc9ye/ZV96HwwN3SiRJMo0SRKNDm9Qj+1Ttz7Wu9pa9qfcR46uKFT5X9NokSTKNHkrF7u89Z+z7O3u93KM+Xf01YCOA8d3NCp8r8mUaJJlGjy9Va5X9V2Oj97npXnuL0/sC/cqO/CqEmUaBIlmkSJJlGiyennoV89O1973tlh87rSrazi37HV+/Ou0KhJlGgSJZpEiSZRoslZvdxXnsF9R61T+p0rfPbqz6x85itz6BzFDZ0o0SRKNIkSTT55Dn2eld3dnz3Pyup75Xr1V/5Ee6MmUaJJlGgSJZpEiSZRHzmHvveE9JV7sfeuTNj7XRg1iRJNokSTKNEkSjSJWtopbpR5p5KtfMzVyme+Y+88u1GTKNEkSjSJEk2iRJOv1ylulDurwe+Yt/Z7ZX+516DvYuXJd/ahcxQ3dKJEkyjRJEo0OWsf+rxqblSVunId/rM95s+8t+4Wdx46uKFT5X9NokSTKNHk9E5xe7uKjZrpHjUbfjWv59v70Zloo9iHzpfjhk6UaBIlmkSJJlGbe7mPsnK3+J1XX3na2mvh6W8rX92oSZRoEiWaRIkmUaJJ1CEV+qha+9lrzdvzPm//+Mo5/WeMmkSJJlGiSZRoEiWanF6hrzwBbd5a9GdWVs1X89bz7+0QaNQkSjSJEk2iRJMo0eSsCn1v7TZvLfrKc8qevdZrWie9eb8z6OXOUdzQiRJNokSTKNEk6iPPQ+crMGoSJZpEiSZRokmUaBIlmkSJJlGiSZRoEiWaRIkm35r+Azb49E6idJo1AAAAAElFTkSuQmCC" alt="QR code for Quantum Playground" width="190" height="190">
+      <div class="url">github.com/foodnotfit/quantum-playground</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔓</span>
+      <h2>Password Cracker</h2>
+      <p>Watch a hacker try to crack your password live!</p>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAIAAADdBSngAAAE60lEQVR4nO3d240bNwBA0XWQTtRIOklt6SSNqA4DBgykgMnHYMDHFfec77VGa11wQQ2H/PHz1+8v6Plj9xuA/ydNoqRJlDSJkiZR0iRKmkRJkyhpEiVNoqRJ1J93fuj1199f+7z//WfS+7m+8tWdaz17h3eufsf1WqN+r3nuvEOjJlHSJEqaREmTKGnyyTP0ebPLlTPivb/pnff8bGb9nvYOR3n26Rg1iZImUdIkSppESZOzZuijZmHzZoXPXvnO/PfOz4y6+t779Xs/U6MmUdIkSppESZMoaXL6DH2lOzPHZ/eaR92dX7kOf+X3HisZNYmSJlHSJEqaREmTqI+coT+bWY+617x3/vva+vz4SkZNoqRJlDSJkiZR0uT0GXpt3rry6exRq9NHPat+xmdq1CRKmkRJkyhpEiVNzpqh1+7kzpv/zlstX3vPr9hnatQkSppESZMoaRIlTaJ+/Pz1++vTrNzBbO8u8a+Fp7bVGDWJkiZR0iRKmkRJk7POQ1+5U/pee89Mvxp1V32UeSfEGTWJkiZR0iRKmkRJk6jNp61drXwWe+XpZnufKL8a9R3LvLPnjJpESZMoaRIlTaKkSdTSneKe7a9+x6j7yKNON9v7rcIdo97hvN/dqEmUNImSJlHSJEqanL5T3Kkndz87e/3Zz6z0Xvh5WeXOUfxBJ0qaREmTKGly1gx91NPZ89aZ7302/Nn7GfXKr2l7wj97h88YNYmSJlHSJEqaREmTT56hz9sN7Iy7xs+exa6d9Vb73I2aREmTKGkSJU2ipMlZp63V7tLO26fujjOufsfK++xGTaKkSZQ0iZImUdLk9J3intl7h/qOlffH966xf1vlDnf4g06UNImSJlHSJGrzeeh3zNtjvL8L+jPzTkiftzL/yqhJlDSJkiZR0iRKmnzyKvd566j7T7j3f/fXwlnzyr3jjJpESZMoaRIlTaKkyVk7xY26Gz5q9XXtCe5R+8+/B812530T4h46344/6ERJkyhpEiVNzlrlXrsbvnL9/DPz1pnX7vuPYtQkSppESZMoaRIlTc5a5b5yZj1v7r9yN7lRXgvXve/dX86oSZQ0iZImUdIkSppEbZ6h13ZCu6N2+ttr4fcMK9cqGDWJkiZR0iRKmkRJk7OeQ593F/vO1Uftnf7MyvPXrkb9TG3/+SujJlHSJEqaREmTKGnyyffQn5k3T1y5inuUM37T98KnAIyaREmTKGkSJU2ipEnU0tPW5t1Vv2PlCu29s+aXneJgHn/QiZImUdIkSpp8v3vo89Rm8XeuPu/U8ldsrcKoqxs1iZImUdIkSppESZPTT1ubZ++p3M+sPLH9vfDs9ZVrA4yaREmTKGkSJU2ipMknz9CvVp4m9uzqe9d+X681as7+HvQ/P+/qo96hUZMoaRIlTaKkSZQ0OWuGXnvKe9Qrj3qdveeUXY36dmLlunejJlHSJEqaREmTKGly+gx9pZUnkq9ci37GbnJXnkPnKP6gEyVNoqRJlDSJ+sgZ+ijzznlfeQ/9tXWuPe95f6MmUdIkSppESZMoaXL6DH3lPmxXe3dBHzUf76/eX/m5GzWJkiZR0iRKmkRJk6il56E/s3ef9tpZ8KPMO39t1L8yahIlTaKkSZQ0iZImUR95HjrfgVGTKGkSJU2ipEmUNImSJlHSJEqaREmTKGkSJU2+mv4DQR3Yhrm9NgUAAAAASUVORK5CYII=" alt="QR code for Password Cracker" width="190" height="190">
+      <div class="url">github.com/foodnotfit/password-cracker</div>
+    </div>
+    <div class="card">
+      <span class="card-icon">🎭</span>
+      <h2>Deepfake Scanner</h2>
+      <p>Real-time face swap & deepfake detection demo!</p>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAIAAADdBSngAAAFBElEQVR4nO3d4ankNhiG0d2QTtxIOklt6SSNuI6FhYUU4IUII8nP+J7ze67smfvyDd9Ilr7/+PnrG/T88fQNwO+JJlGiSZRoEiWaRIkmUaJJlGgSJZpEiSZRoknUnyMvOv76+9tzzn//mTLO9V2MjHzvvV9HHhln1v2cy97XLCN3qGoSJZpEiSZRokmUaPLJHfq6rnlW5zjrr67v616vvfPXgFlXr/1PVU2iRJMo0SRKNIkSTd7Voa+ba75npI++d611vfa62fBz2aqDEbOurmoSJZpEiSZRokmUaPL2Dv1Zszrinb3/s913n6pJlGgSJZpEiSZRoknUSzr02nz9zjX250t7dlWTKNEkSjSJEk2iRJO3d+g7+8RalzrSR4/cc61nPx/9VFVNokSTKNEkSjSJEk3e1aE/uxP4iFkd8brX3HNMup+RkZ+lahIlmkSJJlGiSZRo8skdem0ddW2OeNZ+7/dec0/tf3qlahIlmkSJJlGiSZRoEvX9x89f//uiWXOys04J3znyiHW7xB8b93uvPTugahIlmkSJJlGiSZRo8skd+ohabzvrr9bdz85x7nn281E1iRJNokSTKNEkSjSJ2rqX+7NzxDtnjWfNjx+TPp9ZV9/5GaqaRIkmUaJJlGgSJZq8fQ59xLp+fMS6+ej+ivH+GvsrVZMo0SRKNIkSTaJEk7fPoe9coT2ri581837vDmc5lt3Punn/EaomUaJJlGgSJZpEiSaf3KHvnBFet6Z9xLpzytatn3/2WuuomkSJJlGiSZRoEiWavH0Ovb/r2izr1uGv23/+mPRcwHWcdb8YqJpEiSZRokmUaBIlmrzrPPRZTzGPXOve/dyzc0/4dZ/hsWzkq3Ujq5pEiSZRokmUaBIlmrxrlfvIa+51u+tme2vr1e9d/di48vzZ/e5UTaJEkyjRJEo0iRJN3j6HXtu5fWSce/P1tZGPjeem7ezZVU2iRJMo0SRKNIkSTT75tLWdvdvOOeJ1PfLOz+d8dLf5dc8yqJpEiSZRokmUaBIlmrz9PPSdZ5Tf0+9bR5zLnvff+RvCCFWTKNEkSjSJEk2iRJOoraetzZrt3TmP/Oyua7UT0HZSNYkSTaJEkyjRJEo0+Xpz6M+uvt55ltm6cUbs3EX/yip3vhxf6ESJJlGiSZRo8q7n0Gsnsu18WnzdU+e1dfjnxjUPV6omUaJJlGgSJZpEiSbvmkPfuYb83v2s65p37nB+xHr2dVe/UjWJEk2iRJMo0SRKNPl6e7mP+DrPdO9ci35sXFG/jqpJlGgSJZpEiSZRosnbn0PfqbZ7+T39Of3j0ZUSqiZRokmUaBIlmkSJJu/ay32nazdX66PvdaC1c8zPR7v4K1WTKNEkSjSJEk2iRJNP7tBrO64/uz581u8Vz+5sf046L2/d56NqEiWaRIkmUaJJlGjyrg792X3Gnj3L7OrZ083OjV3zyNXt5c7L+UInSjSJEk2iRJO3d+g73es3d3ap606HPx/do35knCur3HkVX+hEiSZRokmUaBL1kR36zufQ1119Vh99LluvPvJX657TVzWJEk2iRJMo0SRKNHl7h/5s19w/uewTz0w/b+13N+vqqiZRokmUaBIlmkSJJu/q0J/d3b22t/yzzoE563td/Ky/0qHzKr7QiRJNokSTKNEk6iPPQ+crUDWJEk2iRJMo0SRKNIkSTaJEkyjRJEo0iRJNokSTb03/AS6F5VtKIbbgAAAAAElFTkSuQmCC" alt="QR code for Deepfake Scanner" width="190" height="190">
+      <div class="url">github.com/foodnotfit/deep-live-cam</div>
+    </div>
+</div>
+<footer>
+  <strong>Tetrabolt LLC</strong> — Cybersecurity &amp; Mission Technology &nbsp;|&nbsp; tetrabolt.com
+</footer>
+</body>
+</html>
