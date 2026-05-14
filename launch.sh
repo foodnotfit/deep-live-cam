@@ -50,5 +50,11 @@ echo ""
 echo "============================================================"
 echo ""
 
+# Belt-and-suspenders: tell PyTorch's MPS backend to fall back to CPU
+# for any op that would otherwise crash. Specific Mac/macOS combinations
+# trigger Metal command-buffer assertions in PyTorch's MPS backend; this
+# variable lets it degrade gracefully instead of hard-aborting the app.
+export PYTORCH_ENABLE_MPS_FALLBACK=1
+
 # --- Launch --------------------------------------------------------
 exec python run.py --execution-provider cpu --execution-threads 4

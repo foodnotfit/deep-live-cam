@@ -17,6 +17,7 @@ Trump-on-Obama swap at ~6.9 FPS for the full live pipeline.
 """
 
 from typing import Any, List
+import threading
 import warnings
 import onnx
 import torch
@@ -39,6 +40,12 @@ class _MPSSession:
       - session.run(output_names, input_dict) -> list[np.ndarray]
       - session.get_inputs() -> list[NodeArg(name=...)]
       - session.get_outputs() -> list[NodeArg(name=...)]
+
+    Threading note: PyTorch's MPS backend is not fully thread-safe. We
+    serialize all forward calls behind a lock to avoid Metal command-buffer
+    assertions like `addScheduledHandler: after commit` that some Macs hit
+    when MPS state is touched from a worker thread after warmup happened
+    on the main thread.
     """
 
     def __init__(self, onnx_path: str):
@@ -53,32 +60,27 @@ class _MPSSession:
         self._input_names = [i.name for i in onnx_model.graph.input]
         self._output_names = [o.name for o in onnx_model.graph.output]
         self._onnx_model = onnx_model
+        self._lock = threading.Lock()
 
-        # Warmup: first MPS call compiles kernels (~1-2 sec). Better to pay
-        # this cost at session construction than on the first user-visible swap.
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            dummy = []
-            for inp in onnx_model.graph.input:
-                dims = [d.dim_value if d.dim_value > 0 else 1
-                        for d in inp.type.tensor_type.shape.dim]
-                dummy.append(torch.randn(*dims, device=self.device,
-                                         dtype=torch.float32))
-            with torch.inference_mode():
-                _ = self.torch_model(*dummy)
-                torch.mps.synchronize()
+        # NOTE: deliberately no warmup here. Running a dummy forward pass
+        # in the main thread leaves MPS command buffers in a state that
+        # crashes when the worker thread tries to reuse the model. Better
+        # to pay the ~1-2s kernel-compile cost on the first real call,
+        # which happens in the thread that owns the model from then on.
 
     def run(self, output_names, input_dict):
-        torch_inputs = []
-        for name in self._input_names:
-            arr = input_dict[name]
-            torch_inputs.append(torch.from_numpy(arr).to(self.device))
-        with torch.inference_mode():
-            out = self.torch_model(*torch_inputs)
-            torch.mps.synchronize()
-        if isinstance(out, (tuple, list)):
-            return [t.detach().cpu().numpy() for t in out]
-        return [out.detach().cpu().numpy()]
+        # Serialize all MPS calls — see threading note in the class docstring.
+        with self._lock:
+            torch_inputs = []
+            for name in self._input_names:
+                arr = input_dict[name]
+                torch_inputs.append(torch.from_numpy(arr).to(self.device))
+            with torch.inference_mode():
+                out = self.torch_model(*torch_inputs)
+                torch.mps.synchronize()
+            if isinstance(out, (tuple, list)):
+                return [t.detach().cpu().numpy() for t in out]
+            return [out.detach().cpu().numpy()]
 
     def get_inputs(self) -> List[Any]:
         return [_MockIO(n) for n in self._input_names]
